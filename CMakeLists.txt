@@ -51,6 +51,10 @@ target_link_libraries(CSRSpMV PRIVATE
 )
 
 # ---------- 可选: CUDA ----------
+# 显式指定 /opt/cuda 搜索路径，即使 nvcc 不在 PATH 也能找到
+if(NOT DEFINED CUDAToolkit_ROOT AND EXISTS "/opt/cuda/bin/nvcc")
+    set(CUDAToolkit_ROOT "/opt/cuda")
+endif()
 find_package(CUDAToolkit QUIET)
 if(CUDAToolkit_FOUND)
     enable_language(CUDA)
