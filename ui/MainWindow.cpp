@@ -12,7 +12,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
 }
 
 void MainWindow::setupUi() {
-    setWindowTitle("StructKernelBench — 结构仿真核心算子性能分析");
+    setWindowTitle("CSR-SpMV — 稀疏矩阵向量乘性能分析");
     resize(1200, 750);
     statusBar()->showMessage("就绪 Ready");
 

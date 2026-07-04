@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(StructKernelBench VERSION 0.2 LANGUAGES CXX)
+project(CSRSpMV VERSION 0.2 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -23,7 +23,7 @@ endif()
 # ---------- Qt6 ----------
 find_package(Qt6 REQUIRED COMPONENTS Widgets Charts)
 
-qt_add_executable(StructKernelBench
+qt_add_executable(CSRSpMV
     main.cpp
     bench_utils.cpp
     ui/BenchmarkPanel.cpp
@@ -35,7 +35,7 @@ qt_add_executable(StructKernelBench
     CSR-SpMV/spmv_runner.cpp
 )
 
-target_include_directories(StructKernelBench PRIVATE
+target_include_directories(CSRSpMV PRIVATE
     ${CMAKE_SOURCE_DIR}
     ${CMAKE_SOURCE_DIR}/ui
     ${CMAKE_SOURCE_DIR}/CSR-SpMV
@@ -45,7 +45,7 @@ target_include_directories(StructKernelBench PRIVATE
     ${CMAKE_SOURCE_DIR}/CSR-SpMV/cuda
 )
 
-target_link_libraries(StructKernelBench PRIVATE
+target_link_libraries(CSRSpMV PRIVATE
     Qt6::Widgets
     Qt6::Charts
 )
@@ -56,10 +56,10 @@ if(CUDAToolkit_FOUND)
     enable_language(CUDA)
     set(CMAKE_CUDA_STANDARD 17)
     set(CMAKE_CUDA_FLAGS_RELEASE "-O3")
-    target_sources(StructKernelBench PRIVATE
+    target_sources(CSRSpMV PRIVATE
         CSR-SpMV/cuda/cuda_kernel.cu
     )
-    target_compile_definitions(StructKernelBench PRIVATE HAS_CUDA)
+    target_compile_definitions(CSRSpMV PRIVATE HAS_CUDA)
     message(STATUS "CUDA Toolkit found: ${CUDAToolkit_VERSION}")
 else()
     message(STATUS "CUDA Toolkit not found — GPU backend disabled")
@@ -68,8 +68,8 @@ endif()
 # ---------- 可选: OpenMP ----------
 find_package(OpenMP QUIET)
 if(OpenMP_CXX_FOUND)
-    target_link_libraries(StructKernelBench PRIVATE OpenMP::OpenMP_CXX)
-    target_compile_definitions(StructKernelBench PRIVATE HAS_OPENMP)
+    target_link_libraries(CSRSpMV PRIVATE OpenMP::OpenMP_CXX)
+    target_compile_definitions(CSRSpMV PRIVATE HAS_OPENMP)
     message(STATUS "OpenMP found")
 else()
     message(STATUS "OpenMP not found — multi-threading disabled")
