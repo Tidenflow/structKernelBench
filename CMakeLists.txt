@@ -36,15 +36,23 @@ qt_add_executable(StructKernelBench
     CSR-SpMV/kernels/simd.cpp
     # ---- CSR-SpMV runner ----
     CSR-SpMV/spmv_runner.cpp
+    # ---- VonMises kernels ----
+    VonMises/kernels/baseline.cpp
+    VonMises/kernels/openmp.cpp
+    VonMises/kernels/simd.cpp
+    # ---- VonMises runner ----
+    VonMises/vonmises_runner.cpp
     # ---- UI ----
     ui/BenchmarkPanel.cpp
     ui/ResultChartView.cpp
     ui/SpmvMainWidget.cpp
+    ui/VonMisesMainWidget.cpp
 )
 
 target_include_directories(StructKernelBench PRIVATE
     ${CMAKE_SOURCE_DIR}                    # common/bench_utils.h, CSR-SpMV/spmv_runner.h 等
     ${CMAKE_SOURCE_DIR}/CSR-SpMV/kernels   # baseline.h, openmp.h, simd.h, cuda_kernel.h
+    ${CMAKE_SOURCE_DIR}/VonMises/kernels   # baseline.h, openmp.h, simd.h, cuda_kernel.h
     ${CMAKE_SOURCE_DIR}/ui                 # SpmvMainWidget.h, BenchmarkPanel.h 等
 )
 
@@ -66,6 +74,8 @@ if(CUDAToolkit_FOUND)
     target_sources(StructKernelBench PRIVATE
         CSR-SpMV/kernels/cuda_kernel.cu
         CSR-SpMV/kernels/cusparse_kernel.cu
+        VonMises/kernels/cuda_kernel.cu
+        VonMises/kernels/thrust_kernel.cu
     )
     target_link_libraries(StructKernelBench PRIVATE
         CUDA::cusparse

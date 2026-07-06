@@ -5,6 +5,7 @@
 #include <QTabWidget>
 
 #include "SpmvMainWidget.h"
+#include "VonMisesMainWidget.h"
 
 int main(int argc, char* argv[]) {
     QApplication app(argc, argv);
@@ -22,23 +23,24 @@ int main(int argc, char* argv[]) {
     // ---- CSR-SpMV tab ----
     auto* spmvWidget = new SpmvMainWidget;
     tabs->addTab(spmvWidget, "CSR-SpMV / 稀疏矩阵向量乘");
-
-    // 连接算子的 statusMessage → 顶层 statusBar
     QObject::connect(spmvWidget, &SpmvMainWidget::statusMessage,
                      &window, [&window](const QString& msg) {
                          window.statusBar()->showMessage(msg);
                      });
 
-    // TODO: 未来追加 VonMises / MaxStressEnvelope tab
-    auto* placeholder1 = new QLabel("敬请期待 Coming Soon");
-    placeholder1->setAlignment(Qt::AlignCenter);
-    placeholder1->setStyleSheet("font-size: 18px; color: #999;");
-    tabs->addTab(placeholder1, "Von Mises / 等效应力");
+    // ---- Von Mises tab ----
+    auto* vmWidget = new VonMisesMainWidget;
+    tabs->addTab(vmWidget, "Von Mises / 等效应力");
+    QObject::connect(vmWidget, &VonMisesMainWidget::statusMessage,
+                     &window, [&window](const QString& msg) {
+                         window.statusBar()->showMessage(msg);
+                     });
 
-    auto* placeholder2 = new QLabel("敬请期待 Coming Soon");
-    placeholder2->setAlignment(Qt::AlignCenter);
-    placeholder2->setStyleSheet("font-size: 18px; color: #999;");
-    tabs->addTab(placeholder2, "MaxStress / 多工况包络");
+    // TODO: MaxStressEnvelope
+    auto* placeholder = new QLabel("敬请期待 Coming Soon");
+    placeholder->setAlignment(Qt::AlignCenter);
+    placeholder->setStyleSheet("font-size: 18px; color: #999;");
+    tabs->addTab(placeholder, "MaxStress / 多工况包络");
 
     window.setCentralWidget(tabs);
 

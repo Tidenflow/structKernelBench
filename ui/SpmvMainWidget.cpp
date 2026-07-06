@@ -39,7 +39,10 @@ void SpmvMainWidget::setupUi() {
     splitter->addWidget(leftWidget);
 
     // ═══════════════════ 右侧: 图表 ═══════════════════
-    chart_ = new ResultChartView;
+    chart_ = new ResultChartView(
+        "SpMV Performance / 稀疏矩阵向量乘性能对比",
+        "矩阵行数 Rows",
+        "吞吐量 Throughput (GFLOPS)");
     chart_->setMinimumWidth(500);
     splitter->addWidget(chart_);
 

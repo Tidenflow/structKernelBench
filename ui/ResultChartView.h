@@ -13,21 +13,18 @@
 // ============================================================
 // ResultChartView — 右侧图表面板
 //
-// 用 QChart 绘制多后端性能对比折线图:
-//   X 轴: 矩阵行数 (对数坐标)
-//   Y 轴: 吞吐量 GFLOPS
-//   每条线 = 一个后端
+// 多后端性能对比折线图，X 对数坐标。
 // ============================================================
 class ResultChartView : public QWidget {
     Q_OBJECT
 
 public:
-    explicit ResultChartView(QWidget* parent = nullptr);
+    explicit ResultChartView(const QString& title = "",
+                             const QString& xLabel = "",
+                             const QString& yLabel = "",
+                             QWidget* parent = nullptr);
 
-    // 追加一个数据点
-    void addResult(const QString& backend, int rows, double gflops);
-
-    // 清空所有数据
+    void addResult(const QString& backend, int x, double y);
     void clearAll();
 
 private:

@@ -6,30 +6,29 @@
 #include <QtCharts/QLogValueAxis>
 #include <QtCharts/QValueAxis>
 
-ResultChartView::ResultChartView(QWidget* parent) : QWidget(parent) {
-    setupUi();
-}
-
-void ResultChartView::setupUi() {
+ResultChartView::ResultChartView(const QString& title,
+                                 const QString& xLabel,
+                                 const QString& yLabel,
+                                 QWidget* parent)
+    : QWidget(parent)
+{
     auto* layout = new QVBoxLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);
 
     chart_ = new QChart;
-    chart_->setTitle("SpMV Performance / 稀疏矩阵向量乘性能对比");
+    chart_->setTitle(title.isEmpty() ? "Performance" : title);
     chart_->setAnimationOptions(QChart::SeriesAnimations);
     chart_->legend()->setVisible(true);
     chart_->legend()->setAlignment(Qt::AlignBottom);
 
-    // X 轴: 矩阵行数 (对数)
     axisX_ = new QLogValueAxis;
-    axisX_->setTitleText("矩阵行数 Rows");
+    axisX_->setTitleText(xLabel.isEmpty() ? "Size" : xLabel);
     axisX_->setLabelFormat("%.0e");
     axisX_->setBase(10);
     chart_->addAxis(axisX_, Qt::AlignBottom);
 
-    // Y 轴: GFLOPS
     axisY_ = new QValueAxis;
-    axisY_->setTitleText("吞吐量 Throughput (GFLOPS)");
+    axisY_->setTitleText(yLabel.isEmpty() ? "Throughput" : yLabel);
     axisY_->setLabelFormat("%.1f");
     axisY_->setRange(0, 10);
     chart_->addAxis(axisY_, Qt::AlignLeft);
@@ -41,17 +40,7 @@ void ResultChartView::setupUi() {
     setMinimumWidth(400);
 }
 
-// 后端名 → 图表显示名
-static QString displayName(const QString& key) {
-    if (key == "baseline") return "CSR-SpMV baseline (CPU)";
-    if (key == "openmp")   return "CSR-SpMV OpenMP";
-    if (key == "simd")     return "CSR-SpMV SIMD";
-    if (key == "cuda")     return "CSR-SpMV CUDA";
-    if (key == "cusparse") return "CSR-SpMV cuSPARSE (工业级)";
-    return key;
-}
-
-void ResultChartView::addResult(const QString& backend, int rows, double gflops) {
+void ResultChartView::addResult(const QString& backend, int x, double y) {
     std::string key = backend.toStdString();
 
     auto it = seriesMap_.find(key);
@@ -59,7 +48,7 @@ void ResultChartView::addResult(const QString& backend, int rows, double gflops)
 
     if (it == seriesMap_.end()) {
         series = new QLineSeries;
-        series->setName(displayName(backend));
+        series->setName(backend);
         series->setMarkerSize(8);
         series->setPointsVisible(true);
 
@@ -72,7 +61,7 @@ void ResultChartView::addResult(const QString& backend, int rows, double gflops)
         series = it->second;
     }
 
-    series->append(rows, gflops);
+    series->append(x, y);
 
     // 自动调整 Y 轴
     double maxY = 1.0;
