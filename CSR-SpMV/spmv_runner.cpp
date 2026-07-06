@@ -3,7 +3,7 @@
 #include "openmp.h"
 #include "simd.h"
 #include "cuda_kernel.h"
-#include "bench_utils.h"
+#include "common/bench_utils.h"
 
 #include <algorithm>
 #include <cmath>

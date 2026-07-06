@@ -1,24 +1,28 @@
 #pragma once
 
-#include <QMainWindow>
 #include <QTableWidget>
+#include <QWidget>
 #include <vector>
 
 #include "BenchmarkPanel.h"
 #include "ResultChartView.h"
-#include "spmv_runner.h"
+#include "CSR-SpMV/spmv_runner.h"
 
 // ============================================================
-// MainWindow — 主窗口
+// SpmvMainWidget — CSR-SpMV 算子主界面 (QWidget)
 //
+// 作为 Tab 页面嵌入顶层 QTabWidget。
 // 布局: 左侧面板 | 中间表格 | 右侧图表
 // 执行: 按勾选顺序依次跑, 全部完成后一次性画图
 // ============================================================
-class MainWindow : public QMainWindow {
+class SpmvMainWidget : public QWidget {
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget* parent = nullptr);
+    explicit SpmvMainWidget(QWidget* parent = nullptr);
+
+signals:
+    void statusMessage(const QString& msg);
 
 private slots:
     void onRunRequested(const RunConfig& cfg);

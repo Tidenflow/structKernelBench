@@ -1,20 +1,19 @@
-#include "MainWindow.h"
+#include "SpmvMainWidget.h"
 
 #include <QFutureWatcher>
 #include <QHeaderView>
 #include <QSplitter>
-#include <QStatusBar>
+#include <QVBoxLayout>
 #include <QtConcurrent/QtConcurrent>
 
-MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
+SpmvMainWidget::SpmvMainWidget(QWidget* parent) : QWidget(parent) {
     setupUi();
     applyStyle();
 }
 
-void MainWindow::setupUi() {
-    setWindowTitle("CSR-SpMV — 稀疏矩阵向量乘性能分析");
-    resize(1200, 750);
-    statusBar()->showMessage("就绪 Ready");
+void SpmvMainWidget::setupUi() {
+    auto* outerLayout = new QVBoxLayout(this);
+    outerLayout->setContentsMargins(0, 0, 0, 0);
 
     auto* splitter = new QSplitter(Qt::Horizontal);
 
@@ -47,31 +46,29 @@ void MainWindow::setupUi() {
     splitter->setStretchFactor(0, 2);
     splitter->setStretchFactor(1, 3);
 
-    setCentralWidget(splitter);
+    outerLayout->addWidget(splitter);
 
     connect(panel_, &BenchmarkPanel::runRequested,
-            this, &MainWindow::onRunRequested);
+            this, &SpmvMainWidget::onRunRequested);
     connect(panel_, &BenchmarkPanel::clearRequested,
             this, [this]() {
         table_->setRowCount(0);
         chart_->clearAll();
-        statusBar()->showMessage("已清除 Cleared");
+        emit statusMessage("已清除 Cleared");
     });
 }
 
-void MainWindow::applyStyle() {
+void SpmvMainWidget::applyStyle() {
     setStyleSheet(R"(
-        QMainWindow { background-color: #fafafa; }
         QTableWidget {
             gridline-color: #e0e0e0;
             font-size: 12px;
         }
         QTableWidget::item { padding: 4px; }
-        QStatusBar { background-color: #e8e8e8; }
     )");
 }
 
-void MainWindow::onRunRequested(const RunConfig& cfg) {
+void SpmvMainWidget::onRunRequested(const RunConfig& cfg) {
     config_    = cfg;
     taskIndex_ = 0;
     taskTotal_ = cfg.backends.size();
@@ -79,18 +76,18 @@ void MainWindow::onRunRequested(const RunConfig& cfg) {
     // 表格不清除 — 新结果追加在下面
 
     panel_->setRunning(true, 0, taskTotal_);
-    statusBar()->showMessage(
+    emit statusMessage(
         QString("运行中: rows=%1, %2 个后端...")
             .arg(cfg.rows).arg(cfg.backends.size()));
 
     runNext();
 }
 
-void MainWindow::runNext() {
+void SpmvMainWidget::runNext() {
     if (taskIndex_ >= taskTotal_) {
         flushChart();
         panel_->setRunning(false);
-        statusBar()->showMessage(
+        emit statusMessage(
             QString("完成 Done — %1/%1 项").arg(taskTotal_));
         return;
     }
@@ -139,7 +136,7 @@ void MainWindow::runNext() {
     watcher->setFuture(future);
 }
 
-void MainWindow::flushChart() {
+void SpmvMainWidget::flushChart() {
     for (auto& r : resultsBuffer_) {
         chart_->addResult(QString::fromStdString(r.backend), r.rows, r.gflops);
     }
