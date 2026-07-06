@@ -36,15 +36,16 @@ qt_add_executable(StructKernelBench
     CSR-SpMV/kernels/simd.cpp
     # ---- CSR-SpMV runner ----
     CSR-SpMV/spmv_runner.cpp
-    # ---- CSR-SpMV UI ----
-    CSR-SpMV/ui/BenchmarkPanel.cpp
-    CSR-SpMV/ui/ResultChartView.cpp
-    CSR-SpMV/ui/SpmvMainWidget.cpp
+    # ---- UI ----
+    ui/BenchmarkPanel.cpp
+    ui/ResultChartView.cpp
+    ui/SpmvMainWidget.cpp
 )
 
 target_include_directories(StructKernelBench PRIVATE
     ${CMAKE_SOURCE_DIR}                    # common/bench_utils.h, CSR-SpMV/spmv_runner.h 等
     ${CMAKE_SOURCE_DIR}/CSR-SpMV/kernels   # baseline.h, openmp.h, simd.h, cuda_kernel.h
+    ${CMAKE_SOURCE_DIR}/ui                 # SpmvMainWidget.h, BenchmarkPanel.h 等
 )
 
 target_link_libraries(StructKernelBench PRIVATE

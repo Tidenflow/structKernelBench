@@ -4,7 +4,7 @@
 #include <QStatusBar>
 #include <QTabWidget>
 
-#include "CSR-SpMV/ui/SpmvMainWidget.h"
+#include "SpmvMainWidget.h"
 
 int main(int argc, char* argv[]) {
     QApplication app(argc, argv);

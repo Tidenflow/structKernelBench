@@ -38,6 +38,10 @@ StructKernelBench/
 ├── common/
 │   ├── main.cpp                    # 启动器: QTabWidget 多算子切换
 │   └── bench_utils.h / .cpp        # Timer, CsvWriter, median
+├── ui/                             # Qt6 界面（所有算子共用）
+│   ├── BenchmarkPanel.h / .cpp
+│   ├── ResultChartView.h / .cpp
+│   └── SpmvMainWidget.h / .cpp
 ├── CSR-SpMV/
 │   ├── kernels/                    # 计算实现
 │   │   ├── baseline.h / .cpp
@@ -45,11 +49,7 @@ StructKernelBench/
 │   │   ├── simd.h / .cpp
 │   │   ├── cuda_kernel.h / .cu
 │   │   └── cusparse_kernel.h / .cu
-│   ├── spmv_runner.h / .cpp       # 数据生成、计时、验证
-│   └── ui/                         # Qt6 面板
-│       ├── BenchmarkPanel.h / .cpp
-│       ├── ResultChartView.h / .cpp
-│       └── SpmvMainWidget.h / .cpp
+│   └── spmv_runner.h / .cpp       # 数据生成、计时、验证
 ├── VonMises/                       # 计划中
 └── MaxStressEnvelope/              # 计划中
 ```
