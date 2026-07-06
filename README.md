@@ -30,6 +30,60 @@ baseline → OpenMP → SIMD → CUDA(手写) → cuSPARSE(工业级)
 
 ![CSR-SpMV benchmark 界面](docs/testShot/1.png)
 
+---
+
+## Von Mises
+
+6 分量应力张量 → Von Mises 等效应力标量。有限元后处理的经典热点，典型的**计算密集型**算子。
+
+### 后端
+
+| 后端 | 说明 |
+|---|---|
+| baseline | CPU 单线程，逐元素计算 |
+| OpenMP | `#pragma omp parallel for` 按元素并行 |
+| SIMD | 编译器自动向量化 (`-O3 -march=native -ffast-math`) |
+| CUDA | 手写 kernel，单元素单线程 |
+| Thrust | NVIDIA 并行算法库，`thrust::transform` 工业级参考 |
+
+### 对比目的
+
+```
+baseline → OpenMP → SIMD → CUDA(手写) → Thrust(工业级)
+                                         ↑
+                                 手写优化离 Thrust 还有多远？
+```
+
+![Von Mises benchmark 界面](docs/testShot/2.png)
+
+---
+
+## MaxStressEnvelope
+
+多工况最大应力包络：N 个载荷工况 × M 个单元，逐单元取 Von Mises 应力最大值。典型的**分段归约**模式。
+
+### 后端
+
+| 后端 | 说明 |
+|---|---|
+| baseline | CPU 单线程，逐元素遍历工况取 max |
+| OpenMP | `#pragma omp parallel for` 按元素并行 |
+| SIMD | 编译器自动向量化，内层工况循环连续访存 |
+| CUDA | 手写融合 kernel，单元素单线程，寄存器内归约 |
+| CUB | NVIDIA 底层原语库，`DeviceSegmentedReduce::Max` 工业级分段归约 |
+
+### 对比目的
+
+```
+baseline → OpenMP → SIMD → CUDA(手写融合) → CUB(工业级分段归约)
+                                             ↑
+                                手写融合 kernel 离 CUB 原语还有多远？
+```
+
+![MaxStressEnvelope benchmark 界面](docs/testShot/3.png)
+
+---
+
 ### 项目结构
 
 ```
@@ -66,7 +120,7 @@ StructKernelBench/
     │   ├── openmp.h / .cpp
     │   ├── simd.h / .cpp
     │   ├── cuda_kernel.h / .cu
-    │   └── thrust_kernel.h / .cu
+    │   └── cub_kernel.h / .cu
     └── envelope_runner.h / .cpp
 ```
 
