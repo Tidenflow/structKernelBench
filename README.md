@@ -1,8 +1,7 @@
 # StructKernelBench
 
-结构仿真核心算子的 CPU/GPU 性能对比实验。从工业 CAE 流程中抽取计算热点，对比手写并行实现与工业级库的性能差距。
+结构仿真核心算子的 CPU/GPU 性能对比实验。从CAE 流程中抽取计算热点，对比手写并行实现与工业级库的性能差距。
 
-**当前状态**：CSR-SpMV、Von Mises、MaxStressEnvelope 三个算子均已完成。
 
 ---
 
