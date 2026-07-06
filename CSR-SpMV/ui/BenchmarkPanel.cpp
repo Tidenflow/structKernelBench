@@ -82,6 +82,15 @@ void BenchmarkPanel::setupUi() {
 #endif
     backendLayout->addWidget(chkCuda_);
 
+    chkCusparse_ = new QCheckBox("cuSPARSE GPU (工业级参考)");
+#ifdef HAS_CUDA
+    chkCusparse_->setEnabled(true);
+#else
+    chkCusparse_->setEnabled(false);
+    chkCusparse_->setToolTip("编译时未检测到 CUDA Toolkit");
+#endif
+    backendLayout->addWidget(chkCusparse_);
+
     mainLayout->addWidget(backendGroup);
 
     // ============================================================
@@ -119,6 +128,8 @@ void BenchmarkPanel::setupUi() {
             backends << "simd";
         if (chkCuda_->isChecked() && chkCuda_->isEnabled())
             backends << "cuda";
+        if (chkCusparse_->isChecked() && chkCusparse_->isEnabled())
+            backends << "cusparse";
 
         if (backends.isEmpty()) return;
 

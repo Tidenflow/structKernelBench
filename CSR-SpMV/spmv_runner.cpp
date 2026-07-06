@@ -3,6 +3,7 @@
 #include "openmp.h"
 #include "simd.h"
 #include "cuda_kernel.h"
+#include "cusparse_kernel.h"
 #include "common/bench_utils.h"
 
 #include <algorithm>
@@ -111,9 +112,11 @@ using SpmvFunc = void(*)(const double*, const int*, const int*,
                           const double*, double*, int);
 
 static int select_backend(const std::string& backend,
-                          SpmvFunc& func, int& threads, bool& is_cuda)
+                          SpmvFunc& func, int& threads,
+                          bool& is_cuda, bool& is_cusparse)
 {
     is_cuda = false;
+    is_cusparse = false;
     if (backend == "baseline") {
         func = spmv_baseline;
         threads = 1;
@@ -138,6 +141,11 @@ static int select_backend(const std::string& backend,
         threads = 0;
         return 0;
     }
+    if (backend == "cusparse") {
+        is_cusparse = true;
+        threads = 0;
+        return 0;
+    }
     return 1;  // unknown backend
 }
 
@@ -151,8 +159,9 @@ int run_spmv_benchmark(int rows, int nnz_per_row,
     SpmvFunc spmv_fn = nullptr;
     int      threads = 1;
     bool     is_cuda = false;
+    bool     is_cusparse = false;
 
-    if (select_backend(backend, spmv_fn, threads, is_cuda) != 0) {
+    if (select_backend(backend, spmv_fn, threads, is_cuda, is_cusparse) != 0) {
         result.validated = false;
         return 1;
     }
@@ -183,26 +192,29 @@ int run_spmv_benchmark(int rows, int nnz_per_row,
     constexpr int BENCH  = 10;
     double cuda_transfer_ms = 0.0;
 
-    if (is_cuda) {
+    if (is_cuda || is_cusparse) {
 #ifdef HAS_CUDA
-        // CUDA 路径: 内部计时 kernel + transfer
+        // 选择手写 CUDA 或 cuSPARSE
+        auto gpu_fn = is_cusparse ? spmv_cusparse : spmv_cuda;
+
+        // GPU 路径: 内部计时 kernel + transfer
         {
             double kt, tt;
-            int err = spmv_cuda(values.data(), col_idx.data(), row_ptr.data(),
-                                x.data(), y.data(), rows, nnz, &kt, &tt);
+            int err = gpu_fn(values.data(), col_idx.data(), row_ptr.data(),
+                             x.data(), y.data(), rows, nnz, &kt, &tt);
             if (err != 0) { result.validated = false; return 1; }
         }
         for (int iter = 0; iter < WARMUP; ++iter) {
             double kt, tt;
-            spmv_cuda(values.data(), col_idx.data(), row_ptr.data(),
-                      x.data(), y.data(), rows, nnz, &kt, &tt);
+            gpu_fn(values.data(), col_idx.data(), row_ptr.data(),
+                   x.data(), y.data(), rows, nnz, &kt, &tt);
         }
 
         std::vector<double> ktimes, ttimes;
         for (int iter = 0; iter < BENCH; ++iter) {
             double kt, tt;
-            int err = spmv_cuda(values.data(), col_idx.data(), row_ptr.data(),
-                                x.data(), y.data(), rows, nnz, &kt, &tt);
+            int err = gpu_fn(values.data(), col_idx.data(), row_ptr.data(),
+                             x.data(), y.data(), rows, nnz, &kt, &tt);
             if (err != 0) { result.validated = false; return 1; }
             ktimes.push_back(kt);
             ttimes.push_back(tt);

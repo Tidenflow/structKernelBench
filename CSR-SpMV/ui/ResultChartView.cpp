@@ -47,6 +47,7 @@ static QString displayName(const QString& key) {
     if (key == "openmp")   return "CSR-SpMV OpenMP";
     if (key == "simd")     return "CSR-SpMV SIMD";
     if (key == "cuda")     return "CSR-SpMV CUDA";
+    if (key == "cusparse") return "CSR-SpMV cuSPARSE (工业级)";
     return key;
 }
 

@@ -64,6 +64,10 @@ if(CUDAToolkit_FOUND)
     set(CMAKE_CUDA_FLAGS_RELEASE "-O3")
     target_sources(StructKernelBench PRIVATE
         CSR-SpMV/kernels/cuda_kernel.cu
+        CSR-SpMV/kernels/cusparse_kernel.cu
+    )
+    target_link_libraries(StructKernelBench PRIVATE
+        CUDA::cusparse
     )
     target_compile_definitions(StructKernelBench PRIVATE HAS_CUDA)
     message(STATUS "CUDA Toolkit found: ${CUDAToolkit_VERSION}")
