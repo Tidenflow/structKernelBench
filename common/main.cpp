@@ -6,6 +6,7 @@
 
 #include "SpmvMainWidget.h"
 #include "VonMisesMainWidget.h"
+#include "EnvelopeMainWidget.h"
 
 int main(int argc, char* argv[]) {
     QApplication app(argc, argv);
@@ -36,11 +37,13 @@ int main(int argc, char* argv[]) {
                          window.statusBar()->showMessage(msg);
                      });
 
-    // TODO: MaxStressEnvelope
-    auto* placeholder = new QLabel("敬请期待 Coming Soon");
-    placeholder->setAlignment(Qt::AlignCenter);
-    placeholder->setStyleSheet("font-size: 18px; color: #999;");
-    tabs->addTab(placeholder, "MaxStress / 多工况包络");
+    // ---- MaxStressEnvelope tab ----
+    auto* envelopeWidget = new EnvelopeMainWidget;
+    tabs->addTab(envelopeWidget, "MaxStress / 多工况包络");
+    QObject::connect(envelopeWidget, &EnvelopeMainWidget::statusMessage,
+                     &window, [&window](const QString& msg) {
+                         window.statusBar()->showMessage(msg);
+                     });
 
     window.setCentralWidget(tabs);
 

@@ -2,7 +2,7 @@
 
 结构仿真核心算子的 CPU/GPU 性能对比实验。从工业 CAE 流程中抽取计算热点，对比手写并行实现与工业级库的性能差距。
 
-**当前状态**：CSR-SpMV 算子已完成，Von Mises / 多工况包络规划中。
+**当前状态**：CSR-SpMV、Von Mises、MaxStressEnvelope 三个算子均已完成。
 
 ---
 
@@ -41,7 +41,9 @@ StructKernelBench/
 ├── ui/                             # Qt6 界面（所有算子共用）
 │   ├── BenchmarkPanel.h / .cpp
 │   ├── ResultChartView.h / .cpp
-│   └── SpmvMainWidget.h / .cpp
+│   ├── SpmvMainWidget.h / .cpp
+│   ├── VonMisesMainWidget.h / .cpp
+│   └── EnvelopeMainWidget.h / .cpp
 ├── CSR-SpMV/
 │   ├── kernels/                    # 计算实现
 │   │   ├── baseline.h / .cpp
@@ -50,8 +52,22 @@ StructKernelBench/
 │   │   ├── cuda_kernel.h / .cu
 │   │   └── cusparse_kernel.h / .cu
 │   └── spmv_runner.h / .cpp       # 数据生成、计时、验证
-├── VonMises/                       # 计划中
-└── MaxStressEnvelope/              # 计划中
+├── VonMises/
+│   ├── kernels/
+│   │   ├── baseline.h / .cpp
+│   │   ├── openmp.h / .cpp
+│   │   ├── simd.h / .cpp
+│   │   ├── cuda_kernel.h / .cu
+│   │   └── thrust_kernel.h / .cu
+│   └── vonmises_runner.h / .cpp
+└── MaxStressEnvelope/
+    ├── kernels/
+    │   ├── baseline.h / .cpp
+    │   ├── openmp.h / .cpp
+    │   ├── simd.h / .cpp
+    │   ├── cuda_kernel.h / .cu
+    │   └── thrust_kernel.h / .cu
+    └── envelope_runner.h / .cpp
 ```
 
 ### 构建
