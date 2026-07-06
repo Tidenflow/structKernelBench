@@ -48,7 +48,7 @@ private:
     QCheckBox* chkOpenmp_;
     QCheckBox* chkSimd_;
     QCheckBox* chkCuda_;
-    QCheckBox* chkThrust_;
+    QCheckBox* chkCub_;
 
     // 操作
     QPushButton*  btnRun_;

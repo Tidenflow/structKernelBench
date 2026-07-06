@@ -3,7 +3,7 @@
 #include "kernels/openmp.h"
 #include "kernels/simd.h"
 #include "kernels/cuda_kernel.h"
-#include "kernels/thrust_kernel.h"
+#include "kernels/cub_kernel.h"
 #include "common/bench_utils.h"
 
 #include <algorithm>
@@ -87,10 +87,10 @@ using EnvelopeFunc = void(*)(const float*, const float*, const float*,
 
 static int select_backend(const std::string& backend,
                           EnvelopeFunc& func, int& threads,
-                          bool& is_cuda, bool& is_thrust)
+                          bool& is_cuda, bool& is_cub)
 {
-    is_cuda   = false;
-    is_thrust = false;
+    is_cuda = false;
+    is_cub  = false;
     if (backend == "baseline") {
         func = envelope_baseline; threads = 1; return 0;
     }
@@ -109,8 +109,8 @@ static int select_backend(const std::string& backend,
     if (backend == "cuda") {
         is_cuda = true; threads = 0; return 0;
     }
-    if (backend == "thrust") {
-        is_thrust = true; threads = 0; return 0;
+    if (backend == "cub") {
+        is_cub = true; threads = 0; return 0;
     }
     return 1;
 }
@@ -126,9 +126,9 @@ int run_envelope_benchmark(int num_elements,
     EnvelopeFunc env_fn = nullptr;
     int          threads = 1;
     bool         is_cuda = false;
-    bool         is_thrust = false;
+    bool         is_cub = false;
 
-    if (select_backend(backend, env_fn, threads, is_cuda, is_thrust) != 0) {
+    if (select_backend(backend, env_fn, threads, is_cuda, is_cub) != 0) {
         result.validated = false;
         return 1;
     }
@@ -152,9 +152,9 @@ int run_envelope_benchmark(int num_elements,
     constexpr int WARMUP = 3;
     constexpr int BENCH  = 10;
 
-    if (is_cuda || is_thrust) {
+    if (is_cuda || is_cub) {
 #ifdef HAS_CUDA
-        auto gpu_fn = is_thrust ? envelope_thrust : envelope_cuda;
+        auto gpu_fn = is_cub ? envelope_cub : envelope_cuda;
 
         {
             double kt, tt;

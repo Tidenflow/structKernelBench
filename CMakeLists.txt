@@ -85,7 +85,7 @@ if(CUDAToolkit_FOUND)
         VonMises/kernels/cuda_kernel.cu
         VonMises/kernels/thrust_kernel.cu
         MaxStressEnvelope/kernels/cuda_kernel.cu
-        MaxStressEnvelope/kernels/thrust_kernel.cu
+        MaxStressEnvelope/kernels/cub_kernel.cu
     )
     target_link_libraries(StructKernelBench PRIVATE
         CUDA::cusparse

@@ -87,14 +87,14 @@ void EnvelopeMainWidget::setupUi() {
 #endif
     backendLayout->addWidget(chkCuda_);
 
-    chkThrust_ = new QCheckBox("Thrust GPU (工业级参考)");
+    chkCub_ = new QCheckBox("CUB GPU (工业级参考 — 分段归约)");
 #ifdef HAS_CUDA
-    chkThrust_->setEnabled(true);
+    chkCub_->setEnabled(true);
 #else
-    chkThrust_->setEnabled(false);
-    chkThrust_->setToolTip("编译时未检测到 CUDA Toolkit");
+    chkCub_->setEnabled(false);
+    chkCub_->setToolTip("编译时未检测到 CUDA Toolkit");
 #endif
-    backendLayout->addWidget(chkThrust_);
+    backendLayout->addWidget(chkCub_);
 
     leftLayout->addWidget(backendGroup);
 
@@ -225,8 +225,8 @@ void EnvelopeMainWidget::onRunRequested() {
         backends_ << "simd";
     if (chkCuda_->isChecked() && chkCuda_->isEnabled())
         backends_ << "cuda";
-    if (chkThrust_->isChecked() && chkThrust_->isEnabled())
-        backends_ << "thrust";
+    if (chkCub_->isChecked() && chkCub_->isEnabled())
+        backends_ << "cub";
 
     if (backends_.isEmpty()) return;
 
