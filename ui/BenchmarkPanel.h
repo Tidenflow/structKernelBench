@@ -43,6 +43,8 @@ signals:
 private:
     void setupUi();
     void applyStyle();
+    QWidget* createBackendRow(QCheckBox* checkbox, const QString& backendKey);
+    void showBackendInfo(const QString& backendKey);
 
     // 矩阵规模
     QSpinBox* spinRows_;

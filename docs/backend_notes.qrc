@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/backend_notes">
+        <file alias="CSR-SpMV/docs/baseline/v1.md">../CSR-SpMV/docs/baseline/v1.md</file>
+        <file alias="CSR-SpMV/docs/openmp/v1.md">../CSR-SpMV/docs/openmp/v1.md</file>
+        <file alias="CSR-SpMV/docs/simd/v1.md">../CSR-SpMV/docs/simd/v1.md</file>
+        <file alias="CSR-SpMV/docs/cuda/v1.md">../CSR-SpMV/docs/cuda/v1.md</file>
+        <file alias="CSR-SpMV/docs/cusparse/v1.md">../CSR-SpMV/docs/cusparse/v1.md</file>
+    </qresource>
+</RCC>
