@@ -46,8 +46,9 @@ void SpmvMainWidget::setupUi() {
     chart_->setMinimumWidth(500);
     splitter->addWidget(chart_);
 
-    splitter->setStretchFactor(0, 2);
-    splitter->setStretchFactor(1, 3);
+    splitter->setStretchFactor(0, 3);
+    splitter->setStretchFactor(1, 7);
+    splitter->setSizes({300, 700});
 
     outerLayout->addWidget(splitter);
 
