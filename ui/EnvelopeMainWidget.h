@@ -37,6 +37,8 @@ private:
     void setupUi();
     void applyStyle();
     void flushChart();
+    QWidget* createBackendRow(QCheckBox* checkbox, const QString& backendKey);
+    void showBackendInfo(const QString& backendKey);
 
     // 参数
     QSpinBox*  spinElements_;

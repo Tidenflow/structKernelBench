@@ -10,5 +10,10 @@
         <file alias="VonMises/docs/simd/v1.md">../VonMises/docs/simd/v1.md</file>
         <file alias="VonMises/docs/cuda/v1.md">../VonMises/docs/cuda/v1.md</file>
         <file alias="VonMises/docs/thrust/v1.md">../VonMises/docs/thrust/v1.md</file>
+        <file alias="MaxStressEnvelope/docs/baseline/v1.md">../MaxStressEnvelope/docs/baseline/v1.md</file>
+        <file alias="MaxStressEnvelope/docs/openmp/v1.md">../MaxStressEnvelope/docs/openmp/v1.md</file>
+        <file alias="MaxStressEnvelope/docs/simd/v1.md">../MaxStressEnvelope/docs/simd/v1.md</file>
+        <file alias="MaxStressEnvelope/docs/cuda/v1.md">../MaxStressEnvelope/docs/cuda/v1.md</file>
+        <file alias="MaxStressEnvelope/docs/cub/v1.md">../MaxStressEnvelope/docs/cub/v1.md</file>
     </qresource>
 </RCC>
