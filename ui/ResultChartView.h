@@ -4,6 +4,7 @@
 #include <QChartView>
 #include <QLineSeries>
 #include <QLogValueAxis>
+#include <QScatterSeries>
 #include <QValueAxis>
 #include <QWidget>
 
@@ -35,9 +36,25 @@ private:
     QValueAxis*  axisY_;
     QLogValueAxis* axisX_;
 
-    // backend -> series/data points
-    std::map<std::string, QLineSeries*> seriesMap_;
+    // backend -> rendered series/data points
+    std::map<std::string, QLineSeries*> lineSeriesMap_;
+    std::map<std::string, QScatterSeries*> pointSeriesMap_;
     std::map<std::string, std::map<double, double>> dataMap_;
 
     void updateAxes();
+    void resetAxes();
+    void refreshDataBounds();
+    void setAxisRange(double minX, double maxX, double minY, double maxY, bool zoomed);
+    void zoomAround(double factor, const QPoint& viewPos);
+    void zoomToRect(const QRect& viewRect);
+    void panPixels(const QPoint& deltaPixels);
+    void updateRenderedSeries();
+    void updatePointLabels();
+
+    bool isZoomed_ = false;
+    bool hasData_ = false;
+    double fullMinX_ = 1.0;
+    double fullMaxX_ = 10.0;
+    double fullMinY_ = 0.0;
+    double fullMaxY_ = 10.0;
 };
