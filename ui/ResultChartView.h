@@ -35,6 +35,9 @@ private:
     QValueAxis*  axisY_;
     QLogValueAxis* axisX_;
 
-    // backend → series
+    // backend -> series/data points
     std::map<std::string, QLineSeries*> seriesMap_;
+    std::map<std::string, std::map<double, double>> dataMap_;
+
+    void updateAxes();
 };
