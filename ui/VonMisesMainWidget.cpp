@@ -1,9 +1,13 @@
 #include "VonMisesMainWidget.h"
+#include "BackendInfoDialog.h"
 
 #include <QFormLayout>
 #include <QFutureWatcher>
 #include <QHeaderView>
+#include <QHBoxLayout>
 #include <QSplitter>
+#include <QStyle>
+#include <QToolButton>
 #include <QtConcurrent/QtConcurrent>
 
 #include <algorithm>
@@ -65,13 +69,13 @@ void VonMisesMainWidget::setupUi() {
 
     chkBaseline_ = new QCheckBox("CPU baseline (单线程)");
     chkBaseline_->setChecked(true);
-    backendLayout->addWidget(chkBaseline_);
+    backendLayout->addWidget(createBackendRow(chkBaseline_, "baseline"));
 
     chkOpenmp_ = new QCheckBox("OpenMP 多线程");
-    backendLayout->addWidget(chkOpenmp_);
+    backendLayout->addWidget(createBackendRow(chkOpenmp_, "openmp"));
 
     chkSimd_ = new QCheckBox("SIMD 编译优化 (-O3 -march=native)");
-    backendLayout->addWidget(chkSimd_);
+    backendLayout->addWidget(createBackendRow(chkSimd_, "simd"));
 
     chkCuda_ = new QCheckBox("CUDA GPU");
 #ifdef HAS_CUDA
@@ -80,7 +84,7 @@ void VonMisesMainWidget::setupUi() {
     chkCuda_->setEnabled(false);
     chkCuda_->setToolTip("编译时未检测到 CUDA Toolkit");
 #endif
-    backendLayout->addWidget(chkCuda_);
+    backendLayout->addWidget(createBackendRow(chkCuda_, "cuda"));
 
     chkThrust_ = new QCheckBox("Thrust GPU (工业级参考)");
 #ifdef HAS_CUDA
@@ -89,7 +93,7 @@ void VonMisesMainWidget::setupUi() {
     chkThrust_->setEnabled(false);
     chkThrust_->setToolTip("编译时未检测到 CUDA Toolkit");
 #endif
-    backendLayout->addWidget(chkThrust_);
+    backendLayout->addWidget(createBackendRow(chkThrust_, "thrust"));
 
     leftLayout->addWidget(backendGroup);
 
@@ -234,6 +238,24 @@ void VonMisesMainWidget::applyStyle() {
             border-radius: 1px;
         }
         QCheckBox { spacing: 6px; }
+        QToolButton {
+            min-width: 22px;
+            max-width: 22px;
+            min-height: 22px;
+            max-height: 22px;
+            border: 1px solid #c3c8cf;
+            border-radius: 11px;
+            background-color: #ffffff;
+            color: #3f5365;
+            font-weight: 700;
+        }
+        QToolButton:hover {
+            background-color: #eef1f4;
+            border-color: #9ba7b3;
+        }
+        QToolButton:pressed {
+            background-color: #dfe5eb;
+        }
         QTableWidget {
             gridline-color: #dfe3e8;
             font-size: 12px;
@@ -252,6 +274,33 @@ void VonMisesMainWidget::applyStyle() {
             font-weight: 600;
         }
     )");
+}
+
+QWidget* VonMisesMainWidget::createBackendRow(QCheckBox* checkbox, const QString& backendKey) {
+    auto* row = new QWidget;
+    auto* layout = new QHBoxLayout(row);
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->setSpacing(6);
+
+    auto* infoButton = new QToolButton;
+    infoButton->setIcon(style()->standardIcon(QStyle::SP_MessageBoxInformation));
+    infoButton->setCursor(Qt::PointingHandCursor);
+    infoButton->setToolTip("查看当前实现说明");
+    infoButton->setAutoRaise(false);
+
+    layout->addWidget(checkbox, 1);
+    layout->addWidget(infoButton, 0, Qt::AlignRight);
+
+    connect(infoButton, &QToolButton::clicked, this, [this, backendKey]() {
+        showBackendInfo(backendKey);
+    });
+
+    return row;
+}
+
+void VonMisesMainWidget::showBackendInfo(const QString& backendKey) {
+    BackendInfoDialog dialog("VonMises", backendKey, this);
+    dialog.exec();
 }
 
 void VonMisesMainWidget::onRunRequested() {
