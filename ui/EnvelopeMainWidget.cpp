@@ -6,6 +6,7 @@
 #include <QSplitter>
 #include <QtConcurrent/QtConcurrent>
 
+#include <algorithm>
 #include <cmath>
 
 EnvelopeMainWidget::EnvelopeMainWidget(QWidget* parent) : QWidget(parent) {
@@ -40,17 +41,17 @@ void EnvelopeMainWidget::setupUi() {
 
     sliderElements_ = new QSlider(Qt::Horizontal);
     sliderElements_->setRange(0, 700);  // 10^3 ~ 10^7 对数
-    sliderElements_->setValue(500);     // 默认 10^(3+500/100) = 10^5 = 100000
+    sliderElements_->setValue(350);     // 默认 10^(3+350/175) = 10^5 = 100000
     sizeForm->addRow(sliderElements_);
 
     connect(sliderElements_, &QSlider::valueChanged, this, [this](int sv) {
-        int n = static_cast<int>(std::pow(10.0, 3.0 + sv / 100.0));
+        int n = static_cast<int>(std::pow(10.0, 3.0 + sv / 175.0));
         spinElements_->blockSignals(true);
         spinElements_->setValue(n);
         spinElements_->blockSignals(false);
     });
     connect(spinElements_, QOverload<int>::of(&QSpinBox::valueChanged), this, [this](int n) {
-        int sv = static_cast<int>((std::log10(static_cast<double>(n)) - 3.0) * 100.0);
+        int sv = static_cast<int>((std::log10(static_cast<double>(n)) - 3.0) * 175.0);
         sliderElements_->blockSignals(true);
         sliderElements_->setValue(std::clamp(sv, 0, 700));
         sliderElements_->blockSignals(false);
