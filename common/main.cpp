@@ -48,8 +48,32 @@ int main(int argc, char* argv[]) {
     window.setCentralWidget(tabs);
 
     window.setStyleSheet(R"(
-        QMainWindow { background-color: #fafafa; }
-        QStatusBar  { background-color: #e8e8e8; }
+        QMainWindow { background-color: #f3f5f7; }
+        QTabWidget::pane {
+            border-top: 1px solid #c9ced6;
+            background-color: #f3f5f7;
+        }
+        QTabBar::tab {
+            background-color: #e7ebef;
+            color: #30363d;
+            border: 1px solid #c9ced6;
+            border-bottom: none;
+            padding: 7px 14px;
+            margin-right: 2px;
+        }
+        QTabBar::tab:selected {
+            background-color: #f3f5f7;
+            color: #111820;
+            font-weight: 600;
+        }
+        QTabBar::tab:hover {
+            background-color: #eef1f4;
+        }
+        QStatusBar {
+            background-color: #e7ebef;
+            color: #30363d;
+            border-top: 1px solid #c9ced6;
+        }
     )");
 
     window.show();

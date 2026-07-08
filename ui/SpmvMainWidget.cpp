@@ -64,10 +64,22 @@ void SpmvMainWidget::setupUi() {
 void SpmvMainWidget::applyStyle() {
     setStyleSheet(R"(
         QTableWidget {
-            gridline-color: #e0e0e0;
+            gridline-color: #dfe3e8;
             font-size: 12px;
+            background-color: #ffffff;
+            alternate-background-color: #f7f8fa;
+            selection-background-color: #d9e1e8;
+            selection-color: #20262d;
         }
         QTableWidget::item { padding: 4px; }
+        QHeaderView::section {
+            background-color: #eef1f4;
+            border: 0;
+            border-right: 1px solid #d7dce1;
+            border-bottom: 1px solid #c9ced6;
+            padding: 4px 6px;
+            font-weight: 600;
+        }
     )");
 }
 

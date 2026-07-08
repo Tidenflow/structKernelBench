@@ -100,8 +100,8 @@ void EnvelopeMainWidget::setupUi() {
     leftLayout->addWidget(backendGroup);
 
     // ---- 运行 + 进度 ----
-    btnRun_ = new QPushButton("▶  运行 Benchmark");
-    btnRun_->setMinimumHeight(42);
+    btnRun_ = new QPushButton("运行 Benchmark");
+    btnRun_->setMinimumHeight(38);
     btnRun_->setCursor(Qt::PointingHandCursor);
     leftLayout->addWidget(btnRun_);
 
@@ -110,12 +110,13 @@ void EnvelopeMainWidget::setupUi() {
     leftLayout->addWidget(progress_);
 
     auto* btnClear = new QPushButton("清除结果 / Clear Results");
-    btnClear->setMinimumHeight(34);
+    btnClear->setMinimumHeight(32);
     btnClear->setCursor(Qt::PointingHandCursor);
     btnClear->setStyleSheet(
-        "QPushButton { background-color: #eeeeee; color: #555; "
-        "border: 1px solid #ccc; border-radius: 6px; font-size: 13px; }"
-        "QPushButton:hover { background-color: #e0e0e0; }");
+        "QPushButton { background-color: #f8f9fa; color: #30363d; "
+        "border: 1px solid #c9ced6; border-radius: 3px; font-size: 13px; }"
+        "QPushButton:hover { background-color: #eef1f4; }"
+        "QPushButton:pressed { background-color: #e3e7eb; }");
     leftLayout->addWidget(btnClear);
 
     // ---- 最新结果 ----
@@ -175,44 +176,86 @@ void EnvelopeMainWidget::setupUi() {
 
 void EnvelopeMainWidget::applyStyle() {
     setStyleSheet(R"(
+        QWidget {
+            color: #20262d;
+            font-size: 13px;
+        }
         QGroupBox {
-            font-weight: bold;
-            border: 1px solid #bbb;
-            border-radius: 6px;
-            margin-top: 10px;
-            padding-top: 14px;
+            font-weight: 600;
+            border: 1px solid #c9ced6;
+            border-radius: 3px;
+            margin-top: 9px;
+            padding: 12px 8px 8px 8px;
+            background-color: #ffffff;
         }
         QGroupBox::title {
             subcontrol-origin: margin;
-            left: 10px;
-            padding: 0 5px;
+            left: 8px;
+            padding: 0 4px;
+            color: #2f3943;
         }
         QPushButton {
-            background-color: #2979ff;
+            background-color: #3f5365;
             color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 15px;
-            font-weight: bold;
+            border: 1px solid #354757;
+            border-radius: 3px;
+            font-size: 14px;
+            font-weight: 600;
         }
-        QPushButton:hover     { background-color: #448aff; }
-        QPushButton:pressed   { background-color: #2962ff; }
-        QPushButton:disabled  { background-color: #b0bec5; }
+        QPushButton:hover     { background-color: #4a6072; }
+        QPushButton:pressed   { background-color: #314250; }
+        QPushButton:disabled  { background-color: #d7dce1; color: #7b838c; border-color: #c2c8cf; }
+        QSpinBox {
+            min-height: 24px;
+            border: 1px solid #c3c8cf;
+            border-radius: 2px;
+            padding: 2px 6px;
+            background-color: #ffffff;
+        }
+        QSlider::groove:horizontal {
+            height: 4px;
+            background: #d8dde3;
+            border-radius: 2px;
+        }
+        QSlider::handle:horizontal {
+            width: 14px;
+            margin: -5px 0;
+            border: 1px solid #7b8794;
+            border-radius: 2px;
+            background: #f7f8fa;
+        }
+        QSlider::sub-page:horizontal {
+            background: #667888;
+            border-radius: 2px;
+        }
         QProgressBar {
-            border: 1px solid #bbb;
-            border-radius: 4px;
+            border: 1px solid #c3c8cf;
+            border-radius: 2px;
             text-align: center;
+            background-color: #f4f6f8;
         }
         QProgressBar::chunk {
-            background-color: #2979ff;
-            border-radius: 3px;
+            background-color: #5d7080;
+            border-radius: 1px;
         }
         QCheckBox { spacing: 6px; }
         QTableWidget {
-            gridline-color: #e0e0e0;
+            gridline-color: #dfe3e8;
             font-size: 12px;
+            background-color: #ffffff;
+            alternate-background-color: #f7f8fa;
+            selection-background-color: #d9e1e8;
+            selection-color: #20262d;
         }
         QTableWidget::item { padding: 4px; }
+        QHeaderView::section {
+            background-color: #eef1f4;
+            border: 0;
+            border-right: 1px solid #d7dce1;
+            border-bottom: 1px solid #c9ced6;
+            padding: 4px 6px;
+            font-weight: 600;
+        }
     )");
 }
 
@@ -236,7 +279,7 @@ void EnvelopeMainWidget::onRunRequested() {
     taskIndex_    = 0;
 
     btnRun_->setEnabled(false);
-    btnRun_->setText("⏳  运行中...");
+    btnRun_->setText("运行中...");
     progress_->setVisible(true);
     progress_->setRange(0, backends_.size());
     progress_->setValue(0);
@@ -251,7 +294,7 @@ void EnvelopeMainWidget::runNext() {
     if (taskIndex_ >= backends_.size()) {
         flushChart();
         btnRun_->setEnabled(true);
-        btnRun_->setText("▶  运行 Benchmark");
+        btnRun_->setText("运行 Benchmark");
         progress_->setVisible(false);
         emit statusMessage(
             QString("完成 Done — %1/%1 项").arg(backends_.size()));
