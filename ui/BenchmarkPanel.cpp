@@ -1,6 +1,10 @@
 #include "BenchmarkPanel.h"
+#include "BackendInfoDialog.h"
 
 #include <QFormLayout>
+#include <QHBoxLayout>
+#include <QStyle>
+#include <QToolButton>
 
 #include <cmath>
 
@@ -63,15 +67,15 @@ void BenchmarkPanel::setupUi() {
 
     chkBaseline_ = new QCheckBox("CSR-SpMV baseline (CPU 单线程)");
     chkBaseline_->setChecked(true);
-    backendLayout->addWidget(chkBaseline_);
+    backendLayout->addWidget(createBackendRow(chkBaseline_, "baseline"));
 
     chkOpenmp_ = new QCheckBox("OpenMP 多线程");
     chkOpenmp_->setEnabled(true);
-    backendLayout->addWidget(chkOpenmp_);
+    backendLayout->addWidget(createBackendRow(chkOpenmp_, "openmp"));
 
     chkSimd_ = new QCheckBox("SIMD 编译优化 (-O3 -march=native)");
     chkSimd_->setEnabled(true);
-    backendLayout->addWidget(chkSimd_);
+    backendLayout->addWidget(createBackendRow(chkSimd_, "simd"));
 
     chkCuda_ = new QCheckBox("CUDA GPU");
 #ifdef HAS_CUDA
@@ -80,7 +84,7 @@ void BenchmarkPanel::setupUi() {
     chkCuda_->setEnabled(false);
     chkCuda_->setToolTip("编译时未检测到 CUDA Toolkit");
 #endif
-    backendLayout->addWidget(chkCuda_);
+    backendLayout->addWidget(createBackendRow(chkCuda_, "cuda"));
 
     chkCusparse_ = new QCheckBox("cuSPARSE GPU (工业级参考)");
 #ifdef HAS_CUDA
@@ -89,7 +93,7 @@ void BenchmarkPanel::setupUi() {
     chkCusparse_->setEnabled(false);
     chkCusparse_->setToolTip("编译时未检测到 CUDA Toolkit");
 #endif
-    backendLayout->addWidget(chkCusparse_);
+    backendLayout->addWidget(createBackendRow(chkCusparse_, "cusparse"));
 
     mainLayout->addWidget(backendGroup);
 
@@ -229,7 +233,52 @@ void BenchmarkPanel::applyStyle() {
             border-radius: 1px;
         }
         QCheckBox { spacing: 6px; }
+        QToolButton {
+            min-width: 22px;
+            max-width: 22px;
+            min-height: 22px;
+            max-height: 22px;
+            border: 1px solid #c3c8cf;
+            border-radius: 11px;
+            background-color: #ffffff;
+            color: #3f5365;
+            font-weight: 700;
+        }
+        QToolButton:hover {
+            background-color: #eef1f4;
+            border-color: #9ba7b3;
+        }
+        QToolButton:pressed {
+            background-color: #dfe5eb;
+        }
     )");
+}
+
+QWidget* BenchmarkPanel::createBackendRow(QCheckBox* checkbox, const QString& backendKey) {
+    auto* row = new QWidget;
+    auto* layout = new QHBoxLayout(row);
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->setSpacing(6);
+
+    auto* infoButton = new QToolButton;
+    infoButton->setIcon(style()->standardIcon(QStyle::SP_MessageBoxInformation));
+    infoButton->setCursor(Qt::PointingHandCursor);
+    infoButton->setToolTip("查看当前实现说明");
+    infoButton->setAutoRaise(false);
+
+    layout->addWidget(checkbox, 1);
+    layout->addWidget(infoButton, 0, Qt::AlignRight);
+
+    connect(infoButton, &QToolButton::clicked, this, [this, backendKey]() {
+        showBackendInfo(backendKey);
+    });
+
+    return row;
+}
+
+void BenchmarkPanel::showBackendInfo(const QString& backendKey) {
+    BackendInfoDialog dialog("CSR-SpMV", backendKey, this);
+    dialog.exec();
 }
 
 void BenchmarkPanel::showResult(const QString& backend, int rows, int nnz,

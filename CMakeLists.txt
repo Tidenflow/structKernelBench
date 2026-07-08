@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
 
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
@@ -50,10 +51,12 @@ qt_add_executable(StructKernelBench
     MaxStressEnvelope/envelope_runner.cpp
     # ---- UI ----
     ui/BenchmarkPanel.cpp
+    ui/BackendInfoDialog.cpp
     ui/ResultChartView.cpp
     ui/SpmvMainWidget.cpp
     ui/VonMisesMainWidget.cpp
     ui/EnvelopeMainWidget.cpp
+    docs/backend_notes.qrc
 )
 
 target_include_directories(StructKernelBench PRIVATE
